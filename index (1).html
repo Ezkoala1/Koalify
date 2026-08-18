@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Koalify — a powerful, friendly Discord bot for communities.">
+<title>Koalify — Discord Bot</title>
+
+<style>
+:root{
+  --bg:#080a0f;
+  --bg2:#0d1016;
+  --card:#12161e;
+  --card2:#171c25;
+  --text:#f5f7fa;
+  --muted:#9da6b4;
+  --line:rgba(255,255,255,.09);
+  --accent:#e7e9ec;
+  --accent-dark:#b9bec6;
+  --max:1120px;
+  --radius:22px;
+  --shadow:0 25px 80px rgba(0,0,0,.42);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 50% -15%,rgba(255,255,255,.11),transparent 35%),
+    radial-gradient(circle at 10% 30%,rgba(255,255,255,.035),transparent 25%),
+    var(--bg);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  line-height:1.7;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+.container{width:min(var(--max),calc(100% - 36px));margin:auto}
+
+/* NAV */
+.nav{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(8,10,15,.76);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
+}
+.nav-inner{
+  height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:19px;
+  font-weight:850;
+  letter-spacing:-.035em;
+}
+.brand img{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  object-fit:cover;
+}
+.nav-links{
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.nav-links a{
+  padding:9px 12px;
+  color:var(--muted);
+  font-size:14px;
+  border-radius:10px;
+  transition:.2s;
+}
+.nav-links a:hover,
+.nav-links a.active{
+  color:var(--text);
+  background:rgba(255,255,255,.06);
+}
+.mobile-menu{
+  display:none;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.04);
+  color:white;
+  border-radius:10px;
+  padding:8px 11px;
+}
+
+/* BUTTONS */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:44px;
+  padding:11px 18px;
+  border-radius:13px;
+  border:1px solid var(--line);
+  font-weight:800;
+  transition:.2s ease;
+  cursor:pointer;
+}
+.btn:hover{
+  transform:translateY(-2px);
+  border-color:rgba(255,255,255,.2);
+  background:rgba(255,255,255,.08);
+}
+.btn-primary{
+  color:#090b0f;
+  background:#f0f1f3;
+  border-color:#f0f1f3;
+}
+.btn-primary:hover{background:#fff}
+.nav-links a.invite-link{color:#000;display:inline-flex;align-items:center;justify-content:center;align-self:center;}
+.nav-links a.invite-link:hover{color:#000;background:#fff;}
+.btn-secondary{background:rgba(255,255,255,.04)}
+
+/* PAGES */
+.page{display:none}
+.page.active{display:block}
+
+/* HERO */
+.hero{
+  padding:105px 0 90px;
+  text-align:center;
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 12px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.035);
+  border-radius:999px;
+  color:#c7ccd4;
+  font-size:13px;
+}
+.badge-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#e5e7ea;
+  box-shadow:0 0 15px rgba(255,255,255,.7);
+}
+.hero h1{
+  max-width:900px;
+  margin:23px auto 20px;
+  font-size:clamp(50px,8vw,92px);
+  line-height:.97;
+  letter-spacing:-.07em;
+}
+.hero h1 span{color:#aeb4bd}
+.hero p{
+  max-width:690px;
+  margin:auto;
+  color:var(--muted);
+  font-size:18px;
+}
+.hero-actions{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:31px;
+}
+.logo-large{
+  width:min(300px,68vw);
+  height:min(300px,68vw);
+  margin:52px auto 0;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 30px 50px rgba(0,0,0,.55));
+}
+
+/* CONTENT */
+.section{padding:72px 0}
+.eyebrow{
+  color:#858e9c;
+  font-size:12px;
+  font-weight:850;
+  text-transform:uppercase;
+  letter-spacing:.16em;
+}
+.section h2{
+  margin:9px 0 12px;
+  font-size:clamp(32px,5vw,52px);
+  line-height:1.05;
+  letter-spacing:-.05em;
+}
+.lead{
+  max-width:710px;
+  color:var(--muted);
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  margin-top:30px;
+}
+.card{
+  padding:26px;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  box-shadow:var(--shadow);
+}
+.icon{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:#1a1f28;
+  border:1px solid var(--line);
+  margin-bottom:17px;
+}
+.card h3{margin:0 0 7px;font-size:19px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+
+.cta{
+  margin-top:18px;
+  padding:34px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.025));
+}
+.cta h3{margin:0 0 5px;font-size:25px}
+.cta p{margin:0;color:var(--muted)}
+
+/* LEGAL */
+.legal{
+  padding:70px 0 100px;
+}
+.legal-header{
+  max-width:850px;
+  margin-bottom:38px;
+}
+.legal h1{
+  margin:9px 0 12px;
+  font-size:clamp(42px,6vw,68px);
+  line-height:1;
+  letter-spacing:-.06em;
+}
+.updated{font-size:13px;color:#7e8795}
+.legal article{max-width:860px}
+.legal h2{
+  margin:42px 0 10px;
+  font-size:27px;
+  line-height:1.2;
+  letter-spacing:-.025em;
+}
+.legal h3{
+  margin:28px 0 8px;
+  font-size:18px;
+}
+.legal p,.legal li{
+  color:#b6bfcc;
+  font-size:15px;
+}
+.legal ul{padding-left:23px}
+.legal li{margin:7px 0}
+.notice{
+  padding:18px 20px;
+  margin:20px 0;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:rgba(255,255,255,.035);
+  color:#b6bfcc;
+}
+.notice strong{color:white}
+
+/* FOOTER */
+footer{
+  border-top:1px solid var(--line);
+  padding:35px 0;
+  color:#818a98;
+  font-size:13px;
+}
+.footer-inner{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.footer-links{display:flex;gap:18px}
+.footer-links a:hover{color:white}
+
+/* MOBILE */
+@media(max-width:760px){
+  .container{width:min(var(--max),calc(100% - 28px))}
+  .nav-inner{height:64px}
+  .nav-links a:not(.invite-link){display:none}
+  .mobile-menu{display:block}
+  .grid{grid-template-columns:1fr}
+  .cta{flex-direction:column;align-items:flex-start}
+  .hero{padding:75px 0 65px}
+  .hero h1{font-size:clamp(45px,15vw,72px)}
+  .hero p{font-size:16px}
+}
+
+/* MOBILE NAV OPEN */
+.nav-links.open{
+  position:absolute;
+  left:14px;
+  right:14px;
+  top:70px;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  padding:10px;
+  background:#11151d;
+  border:1px solid var(--line);
+  border-radius:16px;
+}
+.nav-links.open a{display:block!important}
+</style>
+</head>
+
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a href="#/" class="brand" data-route>
+      <img src="icon.png" alt="Koalify logo">
+      Koalify
+    </a>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="#/" data-route class="active">Home</a>
+      <a href="#/terms" data-route>Terms</a>
+      <a href="#/privacy" data-route>Privacy</a>
+      <a
+        class="discord-btn"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://discord.gg/t9jVpSxXwc"
+      ><img src="discord.png" alt="" aria-hidden="true">Discord</a>
+    </nav>
+
+    <button class="mobile-menu" id="menuBtn" aria-label="Open menu">☰</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= HOME ================= -->
+<section id="home" class="page active">
+  <div class="container hero">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Built for Discord communities
+    </div>
+
+    <h1>Meet <span>Koalify.</span><br>Your server's new sidekick.</h1>
+
+    <p>
+      A friendly Discord bot designed to make communities easier to manage,
+      customize, and enjoy — without getting in the way.
+    </p>
+
+    <div class="hero-actions">
+      <a
+        class="discord-btn"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://discord.gg/t9jVpSxXwc"
+      ><img src="discord.png" alt="" aria-hidden="true">Discord</a>
+
+      <a class="btn btn-secondary" href="#/privacy" data-route>Privacy Policy</a>
+    </div>
+
+    <img class="logo-large" src="icon.png" alt="Koalify">
+  </div>
+
+  <div class="container section">
+    <div class="eyebrow">Why Koalify</div>
+    <h2>Simple tools. Clean experience.</h2>
+    <p class="lead">
+      Koalify is built around the idea that a Discord bot should feel like
+      a useful part of your community rather than another complicated thing
+      to manage.
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="icon">⚙</div>
+        <h3>Practical</h3>
+        <p>
+          Useful commands and features for everyday Discord communities,
+          from utilities and automation to community management.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="icon">✦</div>
+        <h3>Community-first</h3>
+        <p>
+          Server owners and moderators stay in control. Configure the bot
+          around the way your community actually works.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="icon">◌</div>
+        <h3>Easy to use</h3>
+        <p>
+          Straightforward commands, predictable behavior, and a friendly
+          identity make Koalify approachable for new and established servers.
+        </p>
+      </div>
+    </div>
+
+    <div class="cta">
+      <div>
+        <h3>Ready to add Koalify?</h3>
+        <p>Invite the bot and start exploring what it can do for your server.</p>
+      </div>
+
+      <a
+        class="discord-btn"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://discord.gg/t9jVpSxXwc"
+      ><img src="discord.png" alt="" aria-hidden="true">Discord</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================= TERMS ================= -->
+<section id="terms" class="page">
+  <div class="container legal">
+    <div class="legal-header">
+      <div class="eyebrow">Legal</div>
+      <h1>Terms of Service</h1>
+      <div class="updated">Last updated: August 17, 2026</div>
+    </div>
+
+    <article>
+
+      <h2>1. Acceptance of Terms</h2>
+      <p>
+        These Terms of Service (“Terms”) govern your access to and use of
+        Koalify, including the Koalify Discord bot, website, documentation,
+        commands, features, and related services (collectively, the
+        “Service”). By inviting, accessing, configuring, or using Koalify,
+        you agree to these Terms.
+      </p>
+      <p>
+        If you do not agree with these Terms, you must not use Koalify.
+        If you use Koalify on behalf of a Discord server, organization,
+        community, or other entity, you represent that you have the authority
+        to accept these Terms on its behalf.
+      </p>
+
+      <h2>2. Eligibility</h2>
+      <p>
+        You must be permitted by Discord and applicable law to use the Service.
+        Koalify is intended to operate within Discord and is therefore also
+        subject to Discord’s Terms of Service, Community Guidelines, Developer
+        Policy, and other applicable Discord rules.
+      </p>
+      <p>
+        If you are under the age required to independently agree to contracts
+        in your jurisdiction, you should use the Service only with any
+        permission or supervision required by applicable law.
+      </p>
+
+      <h2>3. The Service</h2>
+      <p>
+        Koalify may provide moderation, utility, information, automation,
+        configuration, entertainment, and other Discord-related features.
+        Features may be added, changed, temporarily disabled, or removed at
+        any time.
+      </p>
+      <p>
+        We do not guarantee that every command will always be available,
+        that every command will work in every Discord server configuration,
+        or that the Service will be uninterrupted or error-free.
+      </p>
+
+      <h2>4. Server Owners and Administrators</h2>
+      <p>
+        Server owners and administrators are responsible for determining
+        whether Koalify is appropriate for their communities. They are also
+        responsible for configuring Discord permissions and bot settings
+        appropriately.
+      </p>
+      <p>
+        Koalify should not be treated as a replacement for human moderation.
+        Automated actions can occasionally be incorrect, incomplete, delayed,
+        or unavailable.
+      </p>
+
+      <h2>5. Acceptable Use</h2>
+      <p>
+        You agree not to use Koalify to violate applicable laws, Discord
+        policies, or the rights of other people. You must not intentionally
+        interfere with the Service or attempt to compromise its security.
+      </p>
+      <p>Prohibited uses include, without limitation:</p>
+      <ul>
+        <li>Attempting to gain unauthorized access to Koalify, its systems, or another user’s data.</li>
+        <li>Using the Service to facilitate fraud, impersonation, harassment, threats, or other harmful activity.</li>
+        <li>Attempting to bypass rate limits, security controls, permission checks, or other technical safeguards.</li>
+        <li>Using the Service to distribute malware or malicious code.</li>
+        <li>Deliberately overloading, disrupting, or abusing the Service or related infrastructure.</li>
+        <li>Using Koalify to evade Discord enforcement or to intentionally violate Discord policies.</li>
+        <li>Using the Service to collect or expose private information without appropriate authorization.</li>
+      </ul>
+
+      <h2>6. Discord Permissions</h2>
+      <p>
+        Koalify may request Discord permissions required for its features.
+        The person installing the bot controls whether those permissions are
+        granted. You should review Discord’s authorization screen carefully
+        and grant only the permissions appropriate for your intended use.
+      </p>
+      <p>
+        A server administrator is responsible for ensuring that Koalify’s
+        permissions do not exceed what the server needs. Broad permissions
+        may allow the bot to perform actions across a server.
+      </p>
+
+      <h2>7. User Content</h2>
+      <p>
+        You retain ownership of content you create and submit through Discord,
+        subject to the rights necessary for Discord and Koalify to provide
+        their respective services. You are responsible for ensuring that you
+        have the necessary rights to content you cause Koalify to process.
+      </p>
+      <p>
+        Some features may process information made available through Discord.
+        Koalify should not be assumed to store all messages or content merely
+        because it is installed in a server. The actual behavior depends on
+        the features enabled and the current implementation.
+      </p>
+
+      <h2>8. Intellectual Property</h2>
+      <p>
+        Koalify’s name, branding, original website design, original code,
+        documentation, graphics, and other materials supplied by the Koalify
+        operator are owned by the operator or used with permission, except
+        for third-party materials.
+      </p>
+      <p>
+        These Terms do not transfer ownership of Koalify or its intellectual
+        property to you. You may use the Service for its intended purpose,
+        but you may not represent Koalify as your own service or reproduce
+        proprietary materials without permission.
+      </p>
+
+      <h2>9. Third-Party Services</h2>
+      <p>
+        Koalify depends on third-party infrastructure and may interact with
+        Discord, hosting providers, APIs, databases, analytics providers,
+        and other services. Third-party services are controlled by their
+        respective providers and may have separate terms and privacy policies.
+      </p>
+      <p>
+        We are not responsible for independent outages, changes, restrictions,
+        or actions taken by third-party providers.
+      </p>
+
+      <h2>10. Availability and Modifications</h2>
+      <p>
+        We may perform maintenance, introduce new features, change existing
+        features, or temporarily suspend parts of the Service. We may also
+        discontinue Koalify entirely if necessary.
+      </p>
+      <p>
+        Because Discord itself changes its APIs and platform behavior,
+        Koalify may occasionally require updates or experience temporary
+        compatibility problems.
+      </p>
+
+      <h2>11. Disclaimers</h2>
+      <p>
+        To the maximum extent permitted by applicable law, the Service is
+        provided “as is” and “as available,” without warranties of any kind,
+        express or implied. We do not guarantee uninterrupted availability,
+        accuracy, reliability, fitness for a particular purpose, or that
+        the Service will meet every individual requirement.
+      </p>
+      <p>
+        Koalify is not an emergency service and should not be relied upon for
+        emergency response, legal decisions, financial decisions, identity
+        verification, or other situations where failure or delay could cause
+        significant harm.
+      </p>
+
+      <h2>12. Limitation of Liability</h2>
+      <p>
+        To the maximum extent permitted by applicable law, Koalify and its
+        operators will not be responsible for indirect, incidental, special,
+        consequential, exemplary, or punitive damages arising from or related
+        to use of the Service.
+      </p>
+      <p>
+        This includes, where legally permitted, loss of data, revenue,
+        profits, goodwill, server access, configuration, or other intangible
+        losses resulting from use or inability to use the Service.
+      </p>
+      <p>
+        Nothing in these Terms excludes liability that cannot legally be
+        excluded or limited under applicable law.
+      </p>
+
+      <h2>13. Indemnification</h2>
+      <p>
+        To the extent permitted by applicable law, you agree to defend and
+        hold harmless Koalify and its operators from claims, liabilities,
+        damages, costs, and reasonable expenses arising from your unlawful
+        use of the Service, your violation of these Terms, or your violation
+        of another person’s rights.
+      </p>
+
+      <h2>14. Suspension and Termination</h2>
+      <p>
+        You may stop using Koalify at any time by removing it from your server
+        and discontinuing use of related services.
+      </p>
+      <p>
+        We may restrict or terminate access where reasonably necessary to
+        protect the Service, users, third parties, infrastructure, or the
+        integrity of Koalify, including where use violates these Terms or
+        applicable policies.
+      </p>
+
+      <h2>15. Privacy</h2>
+      <p>
+        Our handling of information associated with Koalify is described in
+        our Privacy Policy. By using Koalify, you acknowledge that information
+        may be processed as described there, subject to applicable law.
+      </p>
+
+      <h2>16. Changes to These Terms</h2>
+      <p>
+        We may update these Terms when the Service, our practices, or legal
+        requirements change. The “Last updated” date at the top of this page
+        will be changed when the document is materially revised.
+      </p>
+      <p>
+        Where required by law, we will provide additional notice of material
+        changes. Continued use of the Service after updated Terms become
+        effective constitutes acceptance of the revised Terms to the extent
+        permitted by law.
+      </p>
+
+      <h2>17. Severability</h2>
+      <p>
+        If any provision of these Terms is found to be invalid or
+        unenforceable, that provision will be interpreted to the maximum
+        extent permitted by law, and the remaining provisions will remain
+        in effect.
+      </p>
+
+      <h2>18. Contact</h2>
+      <p>
+        For questions about these Terms, contact the Koalify team through the
+        official support method provided on the Koalify website or Discord
+        server.
+      </p>
+
+      <h2>19. Governing Law</h2>
+      <p>
+        Unless mandatory local law provides otherwise, disputes concerning
+        these Terms will be governed by the laws applicable to the operator
+        of Koalify, without regard to conflict-of-law principles. The operator
+        should obtain appropriate legal advice before specifying a particular
+        jurisdiction or dispute-resolution procedure.
+      </p>
+    </article>
+  </div>
+</section>
+
+
+<!-- ================= PRIVACY ================= -->
+<section id="privacy" class="page">
+  <div class="container legal">
+    <div class="legal-header">
+      <div class="eyebrow">Legal</div>
+      <h1>Privacy Policy</h1>
+      <div class="updated">Last updated: August 17, 2026</div>
+    </div>
+
+    <article>
+
+      <div class="notice">
+        <strong>Important:</strong>
+        This is a detailed starter policy, not legal advice. You should update
+        it so that it precisely matches the information Koalify actually
+        collects, stores, processes, shares, and deletes.
+      </div>
+
+      <h2>1. Overview</h2>
+      <p>
+        This Privacy Policy explains how Koalify (“Koalify,” “we,” “us,” or
+        “our”) handles information in connection with the Koalify Discord bot,
+        website, and related services.
+      </p>
+      <p>
+        We aim to collect and retain only information reasonably necessary to
+        provide requested functionality, remember settings, maintain security,
+        troubleshoot problems, and operate and improve the Service.
+      </p>
+
+      <h2>2. Information We May Process</h2>
+
+      <h3>2.1 Discord identifiers</h3>
+      <p>
+        Depending on the features you use, Koalify may receive technical
+        identifiers made available by Discord, including Discord user IDs,
+        server or guild IDs, channel IDs, role IDs, and similar identifiers.
+        These identifiers may be necessary to associate settings with the
+        correct account or server.
+      </p>
+
+      <h3>2.2 Commands and interactions</h3>
+      <p>
+        When you use a Koalify command or interaction, Discord may provide
+        information necessary to execute that interaction. This can include
+        the command name, interaction metadata, server context, and values
+        supplied as command options.
+      </p>
+
+      <h3>2.3 Server configuration</h3>
+      <p>
+        Koalify may store configuration selected by authorized server
+        administrators. Depending on the available features, this may include
+        enabled features, selected channels, role IDs, moderation settings,
+        command preferences, and similar configuration values.
+      </p>
+
+      <h3>2.4 Messages and user-generated content</h3>
+      <p>
+        Some bot features may require access to message content or other
+        content made available through Discord. Koalify should not be assumed
+        to permanently store every message simply because the bot is installed.
+        If a particular feature requires message content, it may process the
+        relevant content to perform that feature.
+      </p>
+
+      <h3>2.5 Website information</h3>
+      <p>
+        When you visit this website, your browser and hosting provider may
+        process ordinary technical information such as IP address, browser
+        type, device information, requested pages, timestamps, and basic
+        security logs. The exact information collected depends on the hosting
+        provider used to publish this website.
+      </p>
+
+      <h2>3. How We Use Information</h2>
+      <p>Information may be used for purposes including:</p>
+      <ul>
+        <li>Providing and operating Koalify’s commands and features.</li>
+        <li>Remembering server configuration and preferences.</li>
+        <li>Responding to support requests.</li>
+        <li>Detecting abuse, fraud, spam, or security incidents.</li>
+        <li>Debugging errors and improving reliability.</li>
+        <li>Maintaining and protecting our infrastructure.</li>
+        <li>Complying with legal obligations or valid legal requests.</li>
+        <li>Understanding aggregate service usage where appropriate.</li>
+      </ul>
+
+      <h2>4. Legal Bases Where Applicable</h2>
+      <p>
+        Where privacy laws such as the GDPR apply, the legal basis for a
+        particular processing activity may depend on its purpose. Depending
+        on the circumstances, we may rely on performance of a requested
+        service, legitimate interests such as security and service
+        maintenance, compliance with legal obligations, or consent where
+        consent is required.
+      </p>
+      <p>
+        The appropriate legal basis can differ by processing activity and
+        jurisdiction. If Koalify is operated commercially or offered to
+        individuals in regulated jurisdictions, the operator should obtain
+        appropriate legal advice.
+      </p>
+
+      <h2>5. Data Retention</h2>
+      <p>
+        We aim to retain information only for as long as reasonably necessary
+        for the purpose for which it was collected.
+      </p>
+      <p>
+        Server configuration may be retained while Koalify is installed or
+        while the configuration remains useful. Security and diagnostic logs
+        may be retained for a limited period where necessary to investigate
+        incidents, prevent abuse, or maintain reliability.
+      </p>
+      <p>
+        Retention periods should be replaced with specific periods if your
+        implementation has defined schedules. Where information is no longer
+        required, we may delete, anonymize, or otherwise de-identify it,
+        subject to legitimate technical, legal, or security requirements.
+      </p>
+
+      <h2>6. Data Deletion</h2>
+      <p>
+        If you want server-specific configuration removed, the server owner
+        or authorized administrator may contact the Koalify team through the
+        official support channel. Requests should identify the relevant
+        Discord server and explain what information should be removed.
+      </p>
+      <p>
+        Deletion requests may be made through the official Koalify support method provided on the website or Discord server.
+      </p>
+
+      <h2>7. Data Sharing</h2>
+      <p>
+        We do not intend to sell personal information. Information may be
+        disclosed to service providers where reasonably necessary to host,
+        secure, maintain, or operate Koalify, subject to appropriate
+        contractual or technical safeguards where applicable.
+      </p>
+      <p>
+        Information may also be disclosed where required by law, legal
+        process, or a valid governmental request, or where reasonably
+        necessary to protect the rights, safety, security, or property of
+        users, the Service, or others.
+      </p>
+
+      <h2>8. Discord and Third-Party Services</h2>
+      <p>
+        Koalify operates through Discord. Discord independently processes
+        information under its own policies and terms. Koalify does not control
+        how Discord processes information outside the information necessary
+        for Koalify’s interaction with Discord.
+      </p>
+      <p>
+        The Service may also rely on hosting providers, databases, APIs,
+        analytics systems, or other third-party infrastructure. Each provider
+        may have its own privacy practices and policies.
+      </p>
+
+      <h2>9. Security</h2>
+      <p>
+        We take reasonable technical and organizational measures appropriate
+        to the nature of the information we process. These measures may
+        include access controls, authentication, restricted administrative
+        access, secure transmission where supported, monitoring, and
+        reasonable backup and recovery procedures.
+      </p>
+      <p>
+        No online service can guarantee absolute security. You should also
+        protect your Discord account, server permissions, authentication
+        credentials, and other access mechanisms.
+      </p>
+
+      <h2>10. Children and Minors</h2>
+      <p>
+        Koalify is a Discord bot rather than a service specifically directed
+        at children. Users must comply with Discord’s age requirements and
+        applicable laws. We do not knowingly request unnecessary personal
+        information from children.
+      </p>
+      <p>
+        If you believe a minor has provided information to Koalify in a way
+        that violates applicable law, contact the operator through the official
+        support method so the matter can be reviewed.
+      </p>
+
+      <h2>11. Your Privacy Rights</h2>
+      <p>
+        Depending on where you live, you may have rights concerning personal
+        information, including rights to access, correct, delete, restrict,
+        object to certain processing, or receive a copy of certain information.
+        Some rights are subject to legal exceptions.
+      </p>
+      <p>
+        Requests should be made using the official contact method listed by
+        the Koalify operator. We may need to verify the request before
+        disclosing or deleting information to prevent unauthorized access.
+      </p>
+
+      <h2>12. International Data Transfers</h2>
+      <p>
+        Because internet services often rely on infrastructure located in
+        multiple countries, information may be processed outside your country
+        of residence. Where applicable law requires safeguards for
+        international transfers, the operator should implement an appropriate
+        transfer mechanism.
+      </p>
+
+      <h2>13. Cookies and Similar Technologies</h2>
+      <p>
+        This website is designed to function without requiring advertising
+        cookies. However, the hosting platform or third-party services may
+        use technically necessary cookies, local storage, security systems,
+        or similar technologies. If analytics, advertising, embedded media,
+        or other tracking technologies are added later, this section should
+        be updated accordingly.
+      </p>
+
+      <h2>14. Changes to This Privacy Policy</h2>
+      <p>
+        We may update this Privacy Policy when the Service, data practices,
+        or legal requirements change. The “Last updated” date will be revised
+        when material changes are made.
+      </p>
+      <p>
+        Where required by law, we will provide additional notice of material
+        changes. Continued use of the Service after a revised policy becomes
+        effective means the updated policy applies to future processing,
+        subject to applicable law.
+      </p>
+
+      <h2>15. Contact</h2>
+      <p>
+        For privacy questions, access requests, deletion requests, or other
+        privacy concerns, contact the Koalify team through the official
+        support method listed on the Koalify website or Discord server.
+      </p>
+
+    </article>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container footer-inner">
+    <div>© 2026 Koalify. Not affiliated with Discord Inc.</div>
+    <div class="footer-links">
+      <a href="#/" data-route>Home</a>
+      <a href="#/terms" data-route>Terms</a>
+      <a href="#/privacy" data-route>Privacy</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/*
+  KOALIFY SINGLE-PAGE ROUTER
+  URLs:
+    index.html#/
+    index.html#/terms
+    index.html#/privacy
+*/
+
+const pages = {
+  "/": "home",
+  "/terms": "terms",
+  "/privacy": "privacy"
+};
+
+function route() {
+  const hash = window.location.hash || "#/";
+  const path = hash.replace(/^#/, "") || "/";
+  const pageId = pages[path] || "home";
+
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.toggle("active", page.id === pageId);
+  });
+
+  document.querySelectorAll("[data-route]").forEach(link => {
+    const href = link.getAttribute("href") || "#/";
+    link.classList.toggle("active", href === "#" + path);
+  });
+
+  document.title =
+    pageId === "home" ? "Koalify — Discord Bot" :
+    pageId === "terms" ? "Koalify — Terms of Service" :
+    "Koalify — Privacy Policy";
+
+  window.scrollTo({top: 0, behavior: "smooth"});
+  document.getElementById("navLinks").classList.remove("open");
+}
+
+window.addEventListener("hashchange", route);
+window.addEventListener("DOMContentLoaded", route);
+
+document.getElementById("menuBtn").addEventListener("click", () => {
+  document.getElementById("navLinks").classList.toggle("open");
+});
+</script>
+
+</body>
+</html>
